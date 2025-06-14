@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: xx-large;
+      text-align: center;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 1s ease-in-out;
+    }
+
+    h1 {
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    .icon {
+      animation: floatGlow 3s ease-in-out infinite;
+      font-size: 4rem;
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translateY(0); text-shadow: 0 0 10px #fff; }
+      50% { transform: translateY(-10px); text-shadow: 0 0 20px #ff0; }
+      100% { transform: translateY(0); text-shadow: 0 0 10px #fff; }
+    }
+  </style>
+</head>
+<body id="bg">
+  <h1 class="icon">🌤</h1>
+  <h1>Weather Forecast</h1>  
+
+  <div style="display: flex; justify-content: center; gap: 10px;">
+    <input type="text" id="cityInput" placeholder="Enter city name" style="padding: 10px;">
+    <button onclick="getWeather()" style="font-size: xx-large;">Get Weather</button>
+  </div>
+
+  <div id="WeatherResult"></div>
+
+  <!-- Background changer -->
+  <script>
+    const bg = document.getElementById("bg");
+    const images = ["a.png", "b.jpg", "c.jpg", "d.jpg", "e.jpg", "f.jpg",   "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg" , "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg",   "12.jpg", "13.jpg", "14.jpg"];
+    let index = 0;
+    setInterval(() => {
+      bg.style.backgroundImage = `url('${images[index]}')`;
+      index = (index + 1) % images.length;
+    }, 2000);
+  </script>
+
+  <!-- Background music -->
+  <audio id="bgMusic" src="r.mp3" loop></audio>
+
+  <script>
+    const music = document.getElementById("bgMusic");
+
+    // Play on first user interaction
+    function startMusic() {
+      music.play().then(() => {
+        console.log("Music playing");
+      }).catch(err => {
+        console.warn("Autoplay failed:", err);
+      });
+      document.removeEventListener("click", startMusic);
+      document.removeEventListener("keydown", startMusic);
+    }
+
+    document.addEventListener("click", startMusic);
+    document.addEventListener("keydown", startMusic);
+  </script>
+  <script>
+    console.log("Script loaded!");
+
+const API_KEY = "deb504db9bf841599eb51710250206";
+
+function getWeather() {
+    const city = document.getElementById("cityInput").value;
+    const result = document.getElementById("WeatherResult");
+
+    if (!city) {
+        result.innerHTML = "Please enter a valid city";
+        return;
+    }
+
+    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(city)}&aqi=no`;
+    console.log(`Fetching weather for ${city}`);
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("City not found");
+            return response.json();
+        })
+        .then(data => {
+            const weather = data.current;
+            result.innerHTML = `
+                <h2 style="margin: 10px 0;">${data.location.name}, ${data.location.country}</h2>
+                <p><strong>Temperature:</strong> ${weather.temp_c} °C</p>
+                <p><strong>Condition:</strong> ${weather.condition.text}</p>
+                <img src="https:${weather.condition.icon}" alt="Weather Icon" />
+            `;
+        })
+        .catch(error => {
+            result.innerHTML = `Error: ${error.message}`;
+        });
+}
+
+  </script>
+
+  <!-- Your weather script -->
+  <script src="srcipt.js"></script>
+</body>
+</html>
